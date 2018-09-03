@@ -1,0 +1,23 @@
+---
+
+- name: Create configuration dirs
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0755
+    owner: "{{ vault_user }}"
+    group: "{{ vault_group }}"
+  with_items:
+    - "{{ vault_configdir }}"
+    - "{{ vault_configdir_ssl }}"
+    - "/var/run/vault"
+
+- name: Setup configuration
+  template:
+    src: config.hcl.j2
+    dest: "{{ vault_configdir }}/config.hcl"
+    owner: "{{ vault_user }}"
+    group: "{{ vault_group }}"
+    mode: 0600
+  notify: restart vault
+

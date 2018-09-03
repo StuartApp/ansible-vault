@@ -1,0 +1,31 @@
+pid_file = "/var/run/vault/vault.pid"
+
+listener "tcp" {
+  address = "{{ vault_listener_tcp_address }}"
+{% if vault_listener_tcp_tls_enable %}
+  tls_disable = false
+  tls_client_ca_file = "{{ vault_configdir_ssl }}/ca.crt"
+  tls_cert_file = "{{ vault_configdir_ssl }}/server.crt"
+  tls_key_file = "{{ vault_configdir_ssl }}/server.key"
+{% else %}
+  tls_disable = true
+{% endif %}
+}
+
+storage "consul" {
+  address = "{{ vault_storage_consul_address }}"
+  scheme  = "{{ vault_storage_consul_scheme }}"
+  path    = "{{ vault_storage_consul_path }}"
+  token   = "{{ vault_storage_consul_token }}"
+{% if vault_storage_consul_cluster_addr != "" %}
+  cluster_addr = "{{ vault_storage_consul_cluster_addr }}"
+{% endif %}
+{% if vault_storage_consul_cluster_addr != "" %}
+  redirect_addr = "{{ vault_storage_consul_redirect_addr }}"
+{% endif %}
+{% if vault_storage_consul_scheme == "https" %}
+  tls_ca_file = "{{ vault_storage_consul_tls_ca_file }}"
+  tls_cert_file = "{{ vault_storage_consul_tls_cert_file }}"
+  tls_key_file = "{{ vault_storage_consul_tls_key_file }}"
+{% endif %}
+}

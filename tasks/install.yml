@@ -1,0 +1,47 @@
+---
+
+- name: Check if vault is installed
+  stat:
+    path: "/usr/local/bin/vault"
+  register: vault_installed
+  check_mode: no
+
+- name: Get current vault version
+  shell: /usr/local/bin/vault version | awk '$1 == "Vault" {gsub(/^[a-z]+/, "", $NF); print $NF}'
+  register: vault_current_version
+  check_mode: no
+  when: vault_installed.stat.exists
+
+- name: Download vault
+  unarchive:
+    src: "{{ vault_url }}"
+    dest: /usr/local/bin
+    remote_src: yes
+  when: (not vault_installed.stat.exists) or (vault_version is version_compare(vault_current_version.stdout, '>'))
+
+- name: Create vault group
+  group:
+    name: "{{ vault_group }}"
+
+- name: Create vault user
+  user:
+    name: "{{ vault_user }}"
+    groups: "{{ consul_group }}"
+
+- name: Install systemd unit
+  template:
+    src: vault.service.j2
+    dest: /etc/systemd/system/vault.service
+    owner: root
+    group: root
+    mode: 0640
+  notify: start vault
+
+- name: Reread Systemd configs
+  systemd: daemon_reload=yes
+
+- name: Enable systemd unit
+  systemd:
+    name: vault
+    enabled: yes
+    masked: no
