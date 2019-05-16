@@ -1,5 +1,16 @@
 pid_file = "/var/run/vault/vault.pid"
 
+{% if vault_web_ui %}
+ui = true
+{% endif %}
+
+{% if vault_api_addr is defined %}
+api_addr = "{{ vault_public_api_addr }}"
+{% endif %}
+{% if vault_cluster_addr is defined %}
+cluster_addr = "{{ vault_cluster_addr }}"
+{% endif %}
+
 listener "tcp" {
   address = "{{ vault_listener_tcp_address }}"
 {% if vault_listener_tcp_tls_enable %}
@@ -29,3 +40,14 @@ storage "consul" {
   tls_key_file = "{{ vault_storage_consul_tls_key_file }}"
 {% endif %}
 }
+
+{% if vault_autounseal_aws %}
+seal "awskms" {
+  region = "{{ vault_autounseal_aws_region }}"
+  kms_key_id = "{{ vault_autounseal_aws_key }}"
+}
+{% endif %}
+
+{% if vault_config_extra != "" %}
+{{ vault_config_extra }}
+{% endif %}

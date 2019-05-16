@@ -1,4 +1,12 @@
+---
 
 - include_tasks: install.yml
 - include_tasks: configure.yml
+- include_tasks: init.yml
+  when: vault_autounseal_aws
+- include_tasks: login.yml
 
+- include_tasks: auth_ldap.yml
+  when: vault_auth_ldap_enable
+- include_tasks: auth_aws.yml
+  when: vault_auth_aws_enable

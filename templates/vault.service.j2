@@ -24,12 +24,13 @@ ExecStartPre=/bin/chown -R {{ vault_user }}:{{ vault_group }} /var/run/vault
 ExecStartPre={{ execstartpre }}
 {% endfor %}
 ExecStart=/usr/local/bin/vault server \
-    -config={{ vault_configdir }} \
+    -config={{ vault_configdir }}
 ExecReload=/bin/kill -HUP $MAINPID
 KillMode=process
 KillSignal=SIGTERM
 Restart=on-failure
 RestartSec=42s
+LimitMEMLOCK=infinity
 
 [Install]
 WantedBy=multi-user.target

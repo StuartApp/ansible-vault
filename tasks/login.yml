@@ -1,0 +1,35 @@
+---
+
+- name: Check if login is already done
+  command: /usr/local/bin/vault auth list
+  register: vault_cluster_login_status
+  failed_when: vault_cluster_login_status.rc > 2
+
+- block:
+    - name: Login into cluster after initialization
+      command: /usr/local/bin/vault login {{ vault_new_root_token }}
+      when: vault_new_root_token is defined and
+            vault_root_token is not defined
+
+    - name: Login into cluster already initialized
+      command: /usr/local/bin/vault login {{ vault_root_token }}
+      when: vault_root_token is defined and
+            vault_new_root_token is not defined
+  when: vault_cluster_login_status is not skipped and
+        vault_cluster_login_status.rc == 2
+
+- name: Set Vault root token fact
+  set_fact:
+    vault_root_token: "{{ vault_new_root_token }}"
+  when: vault_new_root_token is defined and vault_root_token is not defined
+
+- block:
+    - name: Read vault token from token file
+      slurp:
+        src: /root/.vault-token
+      register: vault_new_root_token_slurp
+
+    - name: Set Vault root token fact from token file
+      set_fact:
+        vault_root_token: "{{ vault_new_root_token_slurp.content | b64decode }}"
+  when: vault_new_root_token is not defined and vault_root_token is not defined
