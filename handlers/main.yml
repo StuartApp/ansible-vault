@@ -1,13 +1,13 @@
 ---
 
 - name: restart vault
-  systemd:
+  service:
     state: restarted
-    daemon_reload: yes
     name: vault
+  when: vault_service_state == "started"
 
 - name: start vault
-  systemd:
+  service:
     state: started
-    daemon_reload: yes
     name: vault
+  when: vault_service_state == "started"

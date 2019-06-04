@@ -1,0 +1,18 @@
+---
+
+- name: Check if cluster is initialized
+  command: /usr/local/bin/vault status -format=json
+  register: vault_cluster_initialized
+  failed_when: vault_cluster_initialized.rc > 2
+
+- block:
+    - name: Init cluster
+      command: /usr/local/bin/vault operator init -recovery-shares=1 -recovery-threshold=1 -format=json
+      register: vault_cluster_init
+
+    - name: Capture root token
+      set_fact:
+        vault_new_root_token: "{{ vault_cluster_init.stdout | from_json | json_query('root_token') }}"
+  run_once: true
+  when: vault_cluster_initialized is not skipped and
+        not (vault_cluster_initialized.stdout | from_json | json_query('initialized'))

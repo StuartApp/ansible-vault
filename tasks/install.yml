@@ -7,7 +7,7 @@
   check_mode: no
 
 - name: Get current vault version
-  shell: /usr/local/bin/vault version | awk '$1 == "Vault" {gsub(/^[a-z]+/, "", $NF); print $NF}'
+  shell: /usr/local/bin/vault version | awk '$1 == "Vault" {gsub(/^[a-z]+/, "", $2); print $2}'
   register: vault_current_version
   check_mode: no
   when: vault_installed.stat.exists
@@ -22,11 +22,13 @@
 - name: Create vault group
   group:
     name: "{{ vault_group }}"
+  when: vault_manage_group
 
 - name: Create vault user
   user:
     name: "{{ vault_user }}"
-    groups: "{{ consul_group }}"
+    groups: "{{ vault_group }}"
+  when: vault_manage_user
 
 - name: Install systemd unit
   template:
@@ -40,8 +42,9 @@
 - name: Reread Systemd configs
   systemd: daemon_reload=yes
 
-- name: Enable systemd unit
-  systemd:
+- name: Start vault service
+  service:
     name: vault
-    enabled: yes
-    masked: no
+    state: "{{vault_service_state}}"
+    enabled: "{{vault_service_enabled}}"
+  failed_when: False

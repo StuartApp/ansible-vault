@@ -1,0 +1,22 @@
+---
+
+- name: Check if AWS auth is already enabled
+  uri:
+    url: "{{ vault_api_addr }}/v1/sys/auth"
+    headers:
+      X-Vault-Token: "{{ vault_root_token }}"
+    method: GET
+    status_code: 200
+  register: auth_methods
+
+- name: Enable AWS auth
+  uri:
+    url: "{{ vault_api_addr }}/v1/sys/auth/aws"
+    headers:
+      X-Vault-Token: "{{ vault_root_token }}"
+    method: POST
+    body_format: json
+    body:
+      type: aws
+    status_code: 204
+  when: not ansible_check_mode and not (auth_methods.json | json_query('"aws/"'))
