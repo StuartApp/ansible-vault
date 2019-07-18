@@ -42,4 +42,8 @@ vault_config_extra: ""
 
 vault_auth_ldap_enable: false
 vault_auth_ldap_config: {}
+vault_auth_ldap_method_config:
+  listing_visibility: unauth
+  default_lease_ttl: 168h
+  max_lease_ttl: 168h
 vault_auth_aws_enable: false
