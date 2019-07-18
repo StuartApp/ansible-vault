@@ -19,8 +19,7 @@
     body_format: json
     body:
       type: ldap
-      config:
-        listing_visibility: unauth
+      config: "{{ vault_auth_ldap_method_config }}"
     status_code: 204
   no_log: true
   when: not ansible_check_mode and not (auth_methods.json | json_query('"ldap/"'))
