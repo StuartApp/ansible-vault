@@ -44,4 +44,6 @@ vault_auth_ldap_enable: false
 vault_auth_ldap_config: {}
 vault_auth_ldap_method_config:
   listing_visibility: unauth
+vault_auth_userpass_enable: false
+vault_auth_userpass_method_config: {}
 vault_auth_aws_enable: false

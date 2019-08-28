@@ -1,0 +1,25 @@
+---
+
+- name: Check if UserPass auth is already enabled
+  uri:
+    url: "{{ vault_api_addr }}/v1/sys/auth"
+    headers:
+      X-Vault-Token: "{{ vault_root_token }}"
+    method: GET
+    status_code: 200
+  no_log: true
+  register: auth_methods
+
+- name: Enable UserPass auth
+  uri:
+    url: "{{ vault_api_addr }}/v1/sys/auth/userpass"
+    headers:
+      X-Vault-Token: "{{ vault_root_token }}"
+    method: POST
+    body_format: json
+    body:
+      type: userpass
+      config: "{{ vault_auth_userpass_method_config }}"
+    status_code: 204
+  no_log: true
+  when: not ansible_check_mode and not (auth_methods.json | json_query('"userpass/"'))
