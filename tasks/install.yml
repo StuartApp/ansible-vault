@@ -17,6 +17,7 @@
     src: "{{ vault_url }}"
     dest: /usr/local/bin
     remote_src: yes
+  notify: restart vault
   when: (not vault_installed.stat.exists) or (vault_version is version_compare(vault_current_version.stdout, '>'))
 
 - name: Create vault group
