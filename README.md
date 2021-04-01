@@ -1,5 +1,5 @@
 # ansible-vault role
-Installs and configures Hashicorp Vault for Ubuntu trusty/xenial servers. It also sets AWS, LDAP/Jumpcloud and User&Password authentication methods. It uses Consul as the Storage backend.
+Installs and configures Hashicorp Vault for Linux distros which support `systemd`. It also sets AWS, LDAP/Jumpcloud and User&Password authentication methods. It uses Consul as the Storage backend.
 
 ## Requirements
 ![Ansible](https://img.shields.io/badge/ansible-2.8.2-green)
