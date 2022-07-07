@@ -12,5 +12,5 @@
   when: vault_auth_aws_enable
 - include_tasks: auth_userpass.yml
   when: vault_auth_userpass_enable
-- include_tasks: okta.yml
+- include_tasks: auth_okta.yml
   when: vault_auth_okta_enable
