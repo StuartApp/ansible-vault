@@ -1,6 +1,6 @@
 ---
 
-vault_version: 1.1.2
+vault_version: 1.5.9
 vault_os: linux
 vault_arch: amd64
 vault_url: "https://releases.hashicorp.com/vault/{{ vault_version }}/vault_{{ vault_version }}_{{ vault_os }}_{{ vault_arch }}.zip"
@@ -42,6 +42,9 @@ vault_config_extra: ""
 
 vault_auth_ldap_enable: false
 vault_auth_ldap_config: {}
+vault_auth_okta_enable: false
+vault_auth_okta_config: {}
+
 vault_auth_ldap_method_config:
   listing_visibility: unauth
 vault_auth_userpass_enable: false
